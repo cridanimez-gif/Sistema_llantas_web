@@ -1,0 +1,145 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <!-- Configurar la codificación de caracteres -->
+    <meta charset="UTF-8">
+
+    <!-- Adaptar la página a diferentes tamaños de pantalla -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Título de la página -->
+    <title>Consultar historial</title>
+
+    <!-- Cargar los estilos generales del sistema -->
+    <link rel="stylesheet" href="{% static 'llantas/estilos.css' %}">
+</head>
+
+<body>
+
+    <!-- Encabezado del módulo -->
+    <header class="encabezado">
+        <div>
+            <h1>Consultar historial de llantas</h1>
+        </div>
+
+        <!-- Información del usuario y opciones de navegación -->
+        <div class="usuario-info">
+            <span>Usuario: {{ nombre_usuario }}</span>
+
+            <!-- Regresar al módulo de Administración -->
+            <a href="{% url 'administracion' %}" class="btn btn-azul">
+                Regresar
+            </a>
+
+            <!-- Cerrar la sesión del usuario -->
+            <a href="{% url 'logout' %}" class="btn btn-rojo">
+                Cerrar sesión
+            </a>
+        </div>
+    </header>
+
+    <!-- Contenido principal de la página -->
+    <main class="contenedor">
+
+        <section class="panel">
+            <h2>Consultar ficha de llanta</h2>
+
+            <p>Busca una llanta para consultar su información y antecedentes.</p>
+        </section>
+                    <!-- Formulario para buscar una llanta por su número -->
+            <form method="POST" class="formulario">
+
+                <!-- Protección del formulario contra solicitudes no autorizadas -->
+                {% csrf_token %}
+
+                <!-- Campo para ingresar el número de la llanta -->
+                <label for="numero_llanta">Número de llanta:</label>
+                <input
+                    type="text"
+                    id="numero_llanta"
+                    name="numero_llanta"
+                    placeholder="Ej. PRUEBA001"
+                    required
+                >
+
+                <!-- Botón para realizar la búsqueda -->
+                <button type="submit" class="btn btn-azul">
+                    Buscar llanta
+                </button>
+
+            </form>
+                <!-- Mostrar mensajes de búsqueda -->
+            {% if mensaje %}
+                <div class="mensaje-error">
+                    {{ mensaje }}
+                </div>
+            {% endif %}
+
+            <!-- Mostrar la ficha cuando se encuentre la llanta -->
+            {% if llanta %}
+
+                <h3>Información general de la llanta</h3>
+
+                <div class="panel">
+
+                <!-- Datos principales de la llanta -->
+                    <p><strong>Número:</strong> {{ llanta.numero_llanta }}</p>
+                    <p><strong>Marca:</strong> {{ llanta.marca }}</p>
+                    <p><strong>Diseño:</strong> {{ llanta.diseño }}</p>
+                    <p><strong>Diseño de reencauche:</strong> {{ llanta.diseño_reencauche|default:"No aplica" }}</p>
+                    <p><strong>Dimensión:</strong> {{ llanta.dimension }}</p>
+                    <p><strong>DOT:</strong> {{ llanta.dot|default:"No registrado" }}</p>
+                    <p><strong>Almacén actual:</strong> {{ llanta.id_almacen_actual.nombre_almacen }}</p>
+                    <p><strong>Situación administrativa:</strong> {{ llanta.situacion_administrativa }}</p>
+
+                <!-- Mostrar los datos del retiro físico cuando corresponda -->
+                    {% if llanta.situacion_administrativa == "Retirada" %}
+
+                    <p><strong>Fecha de retiro físico:</strong> {{ llanta.fecha_retiro_fisico|date:"d/m/Y H:i" }}
+                     </p>
+
+                    <p><strong>Empresa encargada del retiro:</strong> {{ llanta.empresa_retiro }}
+                     </p>
+
+                    {% endif %}
+
+                </div>
+
+            <!-- Encabezado del historial de inspecciones -->
+                <h3>Historial de inspecciones</h3>
+
+                {% if inspecciones %}
+
+            <!-- Recorrer todas las inspecciones encontradas -->
+                {% for inspeccion in inspecciones %}
+
+                <div class="panel">
+                     <p><strong>Fecha:</strong> {{ inspeccion.fecha_hora_inspeccion|date:"d/m/Y H:i" }}</p>
+            <!-- Identificar la inspección y el usuario responsable -->
+                    <p><strong>Número de inspección:</strong> {{ inspeccion.id_inspeccion }}</p>
+                    <p><strong>Realizada por:</strong> {{ inspeccion.id_usuario.nombre }} {{ inspeccion.id_usuario.apellido }}</p>
+                    <p><strong>Estado:</strong> {{ inspeccion.estado }}</p>
+                    <p><strong>Profundidad externa:</strong> {{ inspeccion.profundidad_externa }} mm</p>
+                    <p><strong>Profundidad central:</strong> {{ inspeccion.profundidad_central }} mm</p>
+                    <p><strong>Profundidad interna:</strong> {{ inspeccion.profundidad_interna }} mm</p>
+                    <p><strong>Observaciones:</strong> {{ inspeccion.observaciones|default:"Sin observaciones" }}</p>
+                    <p><strong>Almacén de destino:</strong> {{ inspeccion.id_almacen_destino.nombre_almacen }}</p>
+
+                </div>
+
+                {% endfor %}
+
+                {% else %}
+
+                    <p>Esta llanta todavía no tiene inspecciones registradas.</p>
+
+                {% endif %}
+
+            {% endif %}        
+
+    </main>
+
+</body>
+</html>

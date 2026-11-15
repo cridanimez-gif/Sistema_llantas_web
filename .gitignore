@@ -1,0 +1,25 @@
+
+# Entorno virtual de Python
+.venv/
+venv/
+
+# Archivos temporales de Python
+__pycache__/
+*.py[cod]
+
+# Archivos de configuración local y secretos
+.env
+.env.*
+
+# Archivos de la base de datos SQLite
+db.sqlite3
+
+# Archivos cargados por los usuarios
+media/
+
+# Configuración temporal de VS Code
+.vscode/
+# Archivos con información privada
+config/secretos.py
+# Archivos temporales de Code Runner
+config/tempCodeRunnerFile.py

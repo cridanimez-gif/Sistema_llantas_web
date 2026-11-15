@@ -1,0 +1,264 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <!-- Configurar la codificación de caracteres -->
+    <meta charset="UTF-8">
+
+    <!-- Adaptar la página a diferentes tamaños de pantalla -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Título de la página -->
+    <title>Administración de Llantas</title>
+
+    <!-- Hoja de estilos general del sistema -->
+    <link rel="stylesheet" href="{% static 'llantas/estilos.css' %}">
+</head>
+
+<body>
+
+    <!-- Encabezado del módulo -->
+    <header class="encabezado">
+        <div>
+            <h1>Administración de Llantas</h1>
+        </div>
+
+        <!-- Información del usuario y opciones de navegación -->
+        <div class="usuario-info">
+            <span>Usuario: {{ nombre_usuario }}</span>
+
+            <!-- Regresar al inicio del sistema -->
+            <a href="{% url 'inicio' %}" class="btn btn-azul">
+                Regresar
+            </a>
+
+            <!-- Cerrar la sesión del usuario -->
+            <a href="{% url 'logout' %}" class="btn btn-rojo">
+                Cerrar sesión
+            </a>
+        </div>
+    </header>
+
+    <!-- Contenido principal del módulo -->
+    <main class="contenedor">
+
+        <!-- Opciones administrativas -->
+        <section class="panel">
+
+            <h2>Administración de llantas</h2>
+
+            <div class="modulos">
+
+                <!-- Acceso al registro de llantas nuevas -->
+                <a href="{% url 'registrar_llanta' %}" class="modulo-enlace">
+                    <h3>Registrar nueva llanta</h3>
+                    <p>Ingresar una llanta nueva al inventario.</p>
+                </a>
+
+                <!-- Acceso al módulo de consulta del historial -->
+                <a href="{% url 'consultar_historial' %}" class="modulo-enlace">
+                    <h3>Consultar historial</h3>
+                    <p>Consultar inspecciones y antecedentes de una llanta.</p>
+                </a>
+
+            </div>
+
+        </section>
+
+        <!-- Sección para buscar una llanta -->
+        <section class="panel">
+
+            <h2>Buscar llanta</h2>
+
+            <p>
+                Ingresa el número de identificación de la llanta
+                que deseas administrar.
+            </p>
+
+            <!-- Formulario de búsqueda -->
+            <form method="POST" class="formulario">
+
+                {% csrf_token %}
+
+                <label for="numero_llanta">Número de llanta:</label>
+
+                <input
+                    type="text"
+                    id="numero_llanta"
+                    name="numero_llanta"
+                    value="{{ numero_busqueda }}"
+                    placeholder="Ejemplo: PRUEBA001"
+                    required
+                >
+
+                <!-- Botón para realizar la búsqueda -->
+                <button type="submit" class="btn btn-azul">
+                    Buscar llanta
+                </button>
+
+            </form>
+
+            <!-- Mostrar mensajes del sistema -->
+            {% if messages %}
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Mensaje cuando la búsqueda no obtiene resultados -->
+            {% if mensaje_consulta %}
+                <p class="mensaje-error">
+                    {{ mensaje_consulta }}
+                </p>
+            {% endif %}
+
+        </section>
+
+        <!-- Ficha de la llanta encontrada -->
+        {% if llanta_consultada %}
+
+            <section class="panel">
+
+                <h2>Información de la llanta</h2>
+
+                <p>
+                    <strong>Número:</strong>
+                    {{ llanta_consultada.numero_llanta }}
+                </p>
+
+                <p>
+                    <strong>Marca:</strong>
+                    {{ llanta_consultada.marca }}
+                </p>
+
+                <p>
+                    <strong>Diseño:</strong>
+                    {{ llanta_consultada.diseno }}
+                </p>
+
+                <p>
+                    <strong>Dimensión:</strong>
+                    {{ llanta_consultada.dimension }}
+                </p>
+
+                <p>
+                    <strong>DOT:</strong>
+                    {{ llanta_consultada.dot|default:"No registrado" }}
+                </p>
+
+                <p>
+                    <strong>Ubicación física:</strong>
+                    {{ llanta_consultada.id_almacen_actual.nombre_almacen }}
+                </p>
+
+                <p>
+                    <strong>Situación administrativa:</strong>
+                    {{ llanta_consultada.situacion_administrativa }}
+                </p>
+                    <!-- Formulario para registrar el retiro físico de una llanta -->
+    {% if llanta_consultada.situacion_administrativa != "Retirada" and llanta_consultada.id_almacen_actual.nombre_almacen == "Pila de Desecho" and ultima_inspeccion and ultima_inspeccion.estado == "Desecho" %}
+
+        <h3>Registrar retiro físico</h3>
+
+        <form method="POST"
+              action="{% url 'registrar_retiro_fisico' llanta_consultada.numero_llanta %}"
+              onsubmit="return confirm('¿Confirmas que deseas registrar el retiro físico de esta llanta?');">
+
+            {% csrf_token %}
+
+            <label for="empresa_retiro">Empresa encargada del retiro:</label>
+
+            <input
+                type="text"
+                id="empresa_retiro"
+                name="empresa_retiro"
+                maxlength="100"
+                required
+            >
+
+            <button type="submit">Registrar retiro físico</button>
+
+        </form>
+
+    {% endif %}
+
+                <!-- Acciones administrativas de la llanta -->
+                <h2>Acciones administrativas</h2>
+
+                <!-- Opciones disponibles para llantas activas -->
+                {% if llanta_consultada.situacion_administrativa == "Activa" %}
+
+                    <!-- Formulario para congelar la llanta -->
+                    <form method="POST"
+                          onsubmit="return confirm('¿Estás seguro de que deseas congelar esta llanta?')"
+                          action="{% url 'cambiar_situacion' llanta_consultada.numero_llanta 'Congelada' %}">
+
+                        {% csrf_token %}
+
+                        <button type="submit" class="btn btn-azul">
+                            Congelar llanta
+                        </button>
+
+                    </form>
+
+                {% endif %}
+
+                <!-- Opción para reactivar llantas congeladas -->
+                {% if llanta_consultada.situacion_administrativa == "Congelada" %}
+
+                    <form method="POST"
+                          onsubmit="return confirm('¿Estás seguro de que deseas reactivar esta llanta?')"
+                          action="{% url 'cambiar_situacion' llanta_consultada.numero_llanta 'Activa' %}">
+
+                        {% csrf_token %}
+
+                        <button type="submit" class="btn btn-azul">
+                            Reactivar llanta
+                        </button>
+
+                    </form>
+
+                {% endif %}
+
+                    <!-- Verificar si puede desactivarse -->
+                    {% if llanta_consultada.situacion_administrativa == "Activa" or llanta_consultada.situacion_administrativa == "Congelada" %}
+
+                        {% if llanta_consultada.id_almacen_actual.nombre_almacen == "Pila de Desecho" and ultima_inspeccion and ultima_inspeccion.estado == "Desecho" %}
+
+                            <!-- Formulario para desactivar la llanta -->
+                            <form method="POST"
+                                onsubmit="return confirm('¿Estás seguro de que deseas desactivar esta llanta?')"
+                                action="{% url 'cambiar_situacion' llanta_consultada.numero_llanta 'Desactivada' %}">
+
+                                {% csrf_token %}
+
+                                <button type="submit" class="btn btn-rojo">
+                                    Desactivar llanta
+                                </button>
+
+                            </form>
+
+                        {% endif %}
+
+                    {% endif %}
+
+                    <!-- Informar cuando la llanta ya fue retirada -->
+                    {% if llanta_consultada.situacion_administrativa == "Retirada" %}
+
+                        <p>
+                            Esta llanta ya fue retirada físicamente y no admite
+                            nuevos cambios administrativos.
+                        </p>
+
+                    {% endif %}
+
+                </section>
+
+            {% endif %}
+
+        </main>
+
+    </body>
+    </html>

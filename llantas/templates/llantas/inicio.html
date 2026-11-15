@@ -1,0 +1,321 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <!-- Configuración básica del documento -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Título de la pestaña del navegador -->
+    <title>Gestión de Llantas</title>
+
+    <!-- Hoja de estilos principal del sistema -->
+    <link rel="stylesheet" href="{% static 'llantas/estilos.css' %}">
+</head>
+
+<body>
+
+    <!-- =========================================
+         ENCABEZADO PRINCIPAL DEL SISTEMA
+         ========================================= -->
+    <header class="encabezado">
+
+        <!-- Título y mensaje de bienvenida -->
+        <div>
+            <h1>{{ titulo }}</h1>
+            <p>{{ mensaje }}</p>
+        </div>
+
+        <!-- Información del usuario y cierre de sesión -->
+        <div class="usuario-info">
+            <span>Usuario: {{ nombre_usuario }}</span>
+            <a href="{% url 'logout' %}" class="btn btn-rojo">
+                Cerrar sesión
+            </a>
+        </div>
+
+    </header>
+
+
+    <!-- =========================================
+         CONTENIDO PRINCIPAL DE LA PÁGINA
+         ========================================= -->
+    <main class="contenedor">
+
+
+        <!-- =========================================
+             CONSULTA DE LLANTAS POR NÚMERO
+             ========================================= -->
+        <section class="panel">
+
+            <h2>Consultar por número</h2>
+
+            <!-- Formulario que envía el número mediante GET -->
+            <form method="GET" action="{% url 'inicio' %}" class="formulario">
+
+                <label for="numero_llanta">Número de llanta:</label>
+
+                <input
+                    type="text"
+                    id="numero_llanta"
+                    name="numero_llanta"
+                    value="{{ numero_consultado }}"
+                    placeholder="Ejemplo: PRUEBA001"
+                    required
+                >
+
+                <button type="submit" class="btn btn-azul">
+                    Consultar
+                </button>
+
+            </form>
+
+
+            <!-- =========================================
+                 RESULTADO DE LA CONSULTA POR NÚMERO
+                 ========================================= -->
+            {% if numero_consultado %}
+
+                {% if llanta_consultada %}
+
+                    <!-- Ficha con la información de la llanta -->
+                    <div class="resultado">
+
+                        <h3>Información de la llanta</h3>
+
+                        <p><strong>Número:</strong> {{ llanta_consultada.numero_llanta }}</p>
+
+                        <p><strong>Marca:</strong> {{ llanta_consultada.marca }}</p>
+
+                        <p><strong>Diseño:</strong> {{ llanta_consultada.diseño }}</p>
+
+                        <p><strong>Dimensión:</strong> {{ llanta_consultada.dimension }}</p>
+
+                        <p><strong>DOT:</strong> {{ llanta_consultada.dot|default:"-" }}</p>
+
+                        <p><strong>Ubicación:</strong> {{ llanta_consultada.id_almacen_actual }}</p>
+
+                        <p><strong>Estado de inspección:</strong> {{ llanta_consultada.estado_inspeccion }}</p>
+
+                        <p><strong>Situación administrativa:</strong> {{ llanta_consultada.situacion_administrativa }}</p>
+
+                    </div>
+
+
+                <!-- =========================================
+                     ACCESO A NUEVA INSPECCIÓN
+                    ========================================= -->
+                     <!-- Acceso a nueva inspección disponible para todos los roles -->
+                <div class="navegacion">
+
+                  <a
+                     href="{% url 'nueva_inspeccion' llanta_consultada.numero_llanta %}"
+                    class="btn btn-azul"
+    >
+                        Realizar nueva inspección
+                  </a>
+
+                </div>
+
+                {% else %}
+
+                    <!-- Mensaje cuando no se encuentra la llanta -->
+                    <p class="mensaje-error">
+                        {{ mensaje_consulta }}
+                    </p>
+
+                {% endif %}
+
+            {% endif %}
+
+
+        </section>
+
+
+        <!-- =========================================
+             CONSULTA POR UBICACIÓN FÍSICA
+             ========================================= -->
+        <section class="panel">
+
+            <h2>Consultar por ubicación</h2>
+
+            <!-- Formulario para seleccionar un almacén -->
+            <form method="GET" action="{% url 'inicio' %}" class="formulario">
+
+                <label for="ubicacion">Seleccionar ubicación:</label>
+
+                <select name="ubicacion" id="ubicacion" required>
+
+                    <option value="">Seleccione un almacén</option>
+
+                    <!-- Recorrido de los almacenes disponibles -->
+                    {% for almacen in almacenes %}
+
+                        <option
+                            value="{{ almacen.nombre_almacen }}"
+                            {% if ubicacion_seleccionada == almacen.nombre_almacen %}selected{% endif %}
+                        >
+                            {{ almacen.nombre_almacen }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+                <button type="submit" class="btn btn-azul">
+                    Consultar
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- =========================================
+             CONSULTA POR ESTADO DE INSPECCIÓN
+             ========================================= -->
+        <section class="panel">
+
+            <h2>Consultar por estado</h2>
+
+            <!-- Formulario para seleccionar un estado -->
+            <form method="GET" action="{% url 'inicio' %}" class="formulario">
+
+                <label for="estado">Seleccionar estado:</label>
+
+                <select name="estado" id="estado" required>
+
+                    <option value="">Seleccione un estado</option>
+
+                    <!-- Recorrido de los estados disponibles -->
+                    {% for estado in estados %}
+
+                        <option
+                            value="{{ estado }}"
+                            {% if estado_seleccionado == estado %}selected{% endif %}
+                        >
+                            {{ estado }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+                <button type="submit" class="btn btn-azul">
+                    Consultar
+                </button>
+
+            </form>
+
+        </section>
+
+            <!-- =========================================
+         ACCESO AL MÓDULO DE ADMINISTRACIÓN
+         DISPONIBLE PARA ANALISTA E INGENIERO
+         ========================================= -->
+    {% if puede_administrar %}
+
+        <section class="panel">
+
+            <h2>Módulos del sistema</h2>
+
+            <div class="modulos">
+
+                <!-- Acceso al módulo de Administración de Llantas -->
+                <a href="{% url 'administracion' %}" class="modulo-enlace">
+
+                    <h3>Administración de Llantas</h3>
+
+                    <p>Registrar y administrar las llantas del inventario.</p>
+
+                </a>
+
+            </div>
+
+        </section>
+
+    {% endif %}
+
+
+        <!-- =========================================
+             RESULTADOS DE LAS CONSULTAS
+             POR UBICACIÓN O ESTADO
+             ========================================= -->
+        {% if llantas_resultado != None %}
+
+            <section class="panel">
+
+                <h2>Resultados de la consulta</h2>
+
+                <!-- Comprobar si existen llantas para mostrar -->
+                {% if llantas_resultado %}
+
+                    <div class="tabla-contenedor">
+
+                        <table>
+
+                            <!-- Encabezados de la tabla -->
+                            <thead>
+                                <tr>
+                                    <th>Número</th>
+                                    <th>Marca</th>
+                                    <th>Diseño</th>
+                                    <th>Dimensión</th>
+                                    <th>Ubicación</th>
+                                    <th>Situación administrativa</th>
+                                </tr>
+                            </thead>
+
+                            <!-- Información de las llantas encontradas -->
+                            <tbody>
+
+                                {% for llanta in llantas_resultado %}
+
+                                    <tr>
+                                        <td>{{ llanta.numero_llanta }}</td>
+                                        <td>{{ llanta.marca }}</td>
+                                        <td>{{ llanta.diseño }}</td>
+                                        <td>{{ llanta.dimension }}</td>
+                                        <td>{{ llanta.id_almacen_actual }}</td>
+                                        <td>{{ llanta.situacion_administrativa }}</td>
+                                    </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                {% else %}
+
+                    <!-- Mensaje cuando no hay resultados -->
+                    <p>
+                        No se encontraron llantas con el criterio seleccionado.
+                    </p>
+
+                {% endif %}
+
+            </section>
+
+        {% endif %}
+
+
+        <!-- =========================================
+             PIE DE PÁGINA DEL SISTEMA
+             ========================================= -->
+        <footer class="pie">
+
+            Sistema de Gestión y Control de Inventario de Llantas
+            | Versión {{ version }}
+
+        </footer>
+
+
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,770 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <!-- Configuración básica del documento -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Título que aparece en la pestaña del navegador -->
+    <title>Nueva inspección</title>
+
+    <!-- Hoja de estilos general del sistema -->
+    <link rel="stylesheet" href="{% static 'llantas/estilos.css' %}">
+
+    <style>
+
+        /* =========================================
+           1. ENCABEZADO PRINCIPAL DEL SISTEMA
+           ========================================= */
+
+        /* Organizar la franja superior del sistema */
+        .encabezado {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #174A7E;
+            color: #ffffff;
+            padding: 15px 28px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Título del sistema dentro del encabezado */
+        .encabezado h1 {
+            color: #ffffff;
+            font-size: 18px;
+            margin: 0 0 5px 0;
+        }
+
+        /* Mensaje de bienvenida del encabezado */
+        .encabezado p {
+            color: #ffffff;
+            font-size: 12px;
+            margin: 0;
+        }
+
+        /* Organizar el usuario y el botón de cerrar sesión */
+        .usuario-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #ffffff;
+            font-size: 12px;
+        }
+
+        /* Botón rojo para cerrar sesión */
+        .btn-rojo {
+            background-color: #c62828;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        /* Oscurecer el botón al pasar el cursor */
+        .btn-rojo:hover {
+            background-color: #a51f1f;
+        }
+
+
+        /* =========================================
+           2. ORGANIZACIÓN GENERAL DE LA PÁGINA
+           ========================================= */
+
+        /* Contenedor principal del contenido */
+        .contenedor {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 25px;
+        }
+
+        /* Título de la página de nueva inspección */
+        .titulo-pagina {
+            color: #174A7E;
+            text-align: left;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+
+        /* =========================================
+           3. APARIENCIA GENERAL DE LOS CUADROS
+           ========================================= */
+
+        /* Apariencia común de los tres cuadros */
+        section {
+            margin-bottom: 25px;
+            padding: 20px;
+            border: 1px solid #d5d5d5;
+            border-radius: 8px;
+            background-color: #ffffff;
+        }
+
+        /* Títulos de los cuadros */
+        section h2 {
+            color: #174A7E;
+            margin-top: 0;
+            margin-bottom: 18px;
+            font-size: 18px;
+        }
+
+
+        /* =========================================
+           4. INFORMACIÓN GENERAL DE LA LLANTA
+           ========================================= */
+
+        /* Organizar los datos de la llanta en dos columnas */
+        .informacion-llanta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px 40px;
+            color: #000000;
+        }
+
+        /* Separar verticalmente los datos */
+        .columna-datos p {
+            margin: 8px 0;
+        }
+
+        /* Fondo azul para el cuadro de información de la llanta */
+        section:has(.informacion-llanta) {
+            background-color: #ffffff;
+            border: 1px solid #000000;
+            color: #ffffff;
+        }
+
+        /* Título blanco del cuadro de información de la llanta */
+        section:has(.informacion-llanta) h2 {
+            color: #000000;
+        }
+
+
+        /* =========================================
+           5. INFORMACIÓN DE LA ÚLTIMA INSPECCIÓN
+           ========================================= */
+
+        /* Organizar las profundidades y los datos anteriores */
+        .informacion-inspeccion {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            color: #ffffff;
+        }
+
+        /* Separar los datos de la inspección anterior */
+        .informacion-inspeccion p {
+            margin: 8px 0;
+        }
+
+        /* Fondo azul para el cuadro de última inspección */
+        section:has(.informacion-inspeccion) {
+            background-color: #5B8DB8;
+            border: 1px solid #5B8DB8;
+            color: #ffffff;
+        }
+
+        /* Título blanco del cuadro de última inspección */
+        section:has(.informacion-inspeccion) h2 {
+            color: #ffffff;
+        }
+
+        /* Organizar el título y la fecha en una misma línea */
+        .titulo-ultima-inspeccion {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 25px;
+            flex-wrap: nowrap;
+            margin-bottom: 18px;
+        }
+
+        /* Evitar saltos de línea en el título y la fecha */
+        .titulo-ultima-inspeccion h2,
+        .titulo-ultima-inspeccion p {
+            display: inline-block;
+            width: auto;
+            margin: 0;
+            white-space: nowrap;
+            color: #ffffff;
+        }
+
+
+        /* =========================================
+           6. PROFUNDIDADES DE LA NUEVA INSPECCIÓN
+           ========================================= */
+
+        /* Mantener las tres profundidades en una fila */
+        .fila-inspeccion {
+            display: flex;
+            align-items: flex-end;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        /* Organizar cada campo de profundidad verticalmente */
+        .campo-profundidad {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* Etiquetas de las profundidades en azul */
+        .campo-profundidad label {
+            color: #174A7E;
+            font-weight: bold;
+        }
+
+        /* Casillas para ingresar las profundidades */
+        .campo-profundidad input {
+            width: 55px;
+            min-width: 55px;
+            max-width: 55px;
+            height: 32px;
+            padding: 4px;
+            text-align: center;
+            color: #174A7E;
+            box-sizing: border-box;
+        }
+
+
+        /* =========================================
+           7. MENÚ PARA SELECCIONAR EL ALMACÉN
+           ========================================= */
+
+        /* Separar el menú de las casillas de profundidad */
+        .campo-almacen {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        /* Etiqueta del menú en azul */
+        .campo-almacen label {
+            color: #174A7E;
+            font-weight: bold;
+        }
+
+        /* Tamaño y apariencia del menú desplegable */
+        .campo-almacen select {
+            width: 190px;
+            min-width: 190px;
+            max-width: 190px;
+            height: 36px;
+            padding: 5px;
+            color: #174A7E;
+            box-sizing: border-box;
+        }
+
+
+        /* =========================================
+           8. OBSERVACIONES Y FOTOGRAFÍAS
+           ========================================= */
+
+        /* Organizar los campos generales verticalmente */
+        .campo-general {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        /* Etiquetas de observaciones y fotografías en azul */
+        .campo-general label {
+            color: #174A7E;
+            font-weight: bold;
+        }
+
+        /* Ajustar el ancho de los campos */
+        .campo-general textarea,
+        .campo-general input[type="file"] {
+            width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+            padding: 10px;
+            color: #174A7E;
+        }
+
+        /* Permitir ampliar el cuadro de observaciones */
+        .campo-general textarea {
+            resize: vertical;
+        }
+
+        /* Texto de ayuda de las fotografías */
+        .campo-general p {
+            color: #000000;
+            font-size: 13px;
+        }
+
+
+        /* =========================================
+           9. BOTONES DE ACCIÓN
+           ========================================= */
+
+        /* Centrar el botón de registrar */
+        .acciones {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        /* Botón para registrar una nueva inspección */
+        .boton-registrar {
+            background-color: #174A7E;
+            color: #ffffff;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Oscurecer el botón de registrar al pasar el cursor */
+        .boton-registrar:hover {
+            background-color: #0D3155;
+        }
+
+        /* Organizar los botones de navegación */
+        .navegacion {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        /* Botón para regresar al inventario */
+        .boton-atras {
+            display: inline-block;
+            background-color: #174A7E;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 10px 25px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        /* Oscurecer el botón de regresar al pasar el cursor */
+        .boton-atras:hover {
+            background-color: #0D3155;
+        }
+
+
+        /* =========================================
+           10. ADAPTACIÓN A PANTALLAS PEQUEÑAS
+           ========================================= */
+
+        @media (max-width: 600px) {
+
+            /* Organizar el encabezado verticalmente */
+            .encabezado {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            /* Permitir que la información del usuario se acomode */
+            .usuario-info {
+                flex-wrap: wrap;
+            }
+
+            /* Reducir los márgenes del contenido */
+            .contenedor {
+                margin: 15px auto;
+                padding: 15px;
+            }
+
+            /* Mostrar la información en una sola columna */
+            .informacion-llanta,
+            .informacion-inspeccion {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            /* Permitir que el título y la fecha se acomoden */
+            .titulo-ultima-inspeccion {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            /* Permitir que las profundidades se acomoden */
+            .fila-inspeccion {
+                gap: 15px;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- =========================================
+         ENCABEZADO PRINCIPAL DEL SISTEMA
+         ========================================= -->
+
+    <header class="encabezado">
+
+        <!-- Nombre y descripción del sistema -->
+        <div>
+            <h1>Sistema de Gestión y Control de Inventario de Llantas</h1>
+        </div>
+
+        <!-- Usuario que inició sesión y botón para cerrar sesión -->
+        <div class="usuario-info">
+            <span>Usuario: {{ nombre_usuario }}</span>
+
+            <a href="{% url 'logout' %}" class="btn-rojo">
+                Cerrar sesión
+            </a>
+        </div>
+
+    </header>
+
+
+    <!-- =========================================
+         CONTENIDO PRINCIPAL DE LA PÁGINA
+         ========================================= -->
+
+    <main class="contenedor">
+
+        <!-- Título de la página de inspecciones -->
+        <h1 class="titulo-pagina">NUEVA INSPECCIÓN</h1>
+
+
+        <!-- =========================================
+             INFORMACIÓN GENERAL DE LA LLANTA
+             ========================================= -->
+
+        <section>
+
+            <h2>Información de la llanta</h2>
+
+            <div class="informacion-llanta">
+
+                <!-- Primera columna: número, marca y diseño -->
+                <div class="columna-datos">
+
+                    <p>
+                        <strong>Número:</strong>
+                        {{ llanta.numero_llanta }}
+                    </p>
+
+                    <p>
+                        <strong>Marca:</strong>
+                        {{ llanta.marca }}
+                    </p>
+
+                    <p>
+                        <strong>Diseño:</strong>
+                        {{ llanta.diseño }}
+                    </p>
+
+                </div>
+
+                <!-- Segunda columna: DOT, dimensión y técnico -->
+                <div class="columna-datos">
+
+                    <p>
+                        <strong>DOT:</strong>
+                        {{ llanta.dot|default:"Sin dato" }}
+                    </p>
+
+                    <p>
+                        <strong>Dimensión:</strong>
+                        {{ llanta.dimension }}
+                    </p>
+
+                    <p>
+                        <strong>Técnico:</strong>
+                        {{ nombre_usuario }}
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             INFORMACIÓN DE LA ÚLTIMA INSPECCIÓN
+             ========================================= -->
+
+        <section>
+
+            {% if ultima_inspeccion %}
+
+                <!-- Título y fecha de la inspección anterior -->
+                <div class="titulo-ultima-inspeccion">
+
+                    <h2>Última inspección</h2>
+
+                    <p>
+                        <strong>Fecha:</strong>
+                        {{ ultima_inspeccion.fecha_hora_inspeccion|date:"d/m/Y H:i" }}
+                    </p>
+
+                </div>
+
+                <div class="informacion-inspeccion">
+
+                    <!-- Primera columna: profundidades anteriores -->
+                    <div>
+
+                        <p>
+                            <strong>Surco externo:</strong>
+                            {{ ultima_inspeccion.profundidad_externa }}
+                        </p>
+
+                        <p>
+                            <strong>Surco central:</strong>
+                            {{ ultima_inspeccion.profundidad_central }}
+                        </p>
+
+                        <p>
+                            <strong>Surco interno:</strong>
+                            {{ ultima_inspeccion.profundidad_interna }}
+                        </p>
+
+                    </div>
+
+                    <!-- Segunda columna: estado, ubicación y técnico anteriores -->
+                    <div>
+
+                        <!-- Estado registrado en la última inspección -->
+                        <p>
+                            <strong>Estado anterior:</strong>
+                            {{ ultima_inspeccion.estado }}
+                        </p>
+
+                        <!-- Ubicación registrada en la última inspección -->
+                        <p>
+                            <strong>Ubicación anterior:</strong>
+                            {{ ultima_inspeccion.id_almacen_destino.nombre_almacen }}
+                        </p>
+
+                        <!-- Técnico que realizó la última inspección -->
+                        <p>
+                            <strong>Realizado por:</strong>
+                            {{ ultima_inspeccion.id_usuario.nombre }}
+                            {{ ultima_inspeccion.id_usuario.apellido }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            {% else %}
+
+                <!-- Título y mensaje cuando no existen inspecciones anteriores -->
+                <h2>Última inspección</h2>
+
+                <p>
+                    Esta llanta todavía no tiene inspecciones registradas.
+                </p>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- =========================================
+             FORMULARIO DE LA NUEVA INSPECCIÓN
+             ========================================= -->
+
+        <section>
+
+            <h2>Datos de la nueva inspección</h2>
+
+            <form method="POST" enctype="multipart/form-data">
+
+                <!-- Protección de Django para el envío del formulario -->
+                {% csrf_token %}
+
+
+                <!-- =========================================
+                     PROFUNDIDADES DE LA NUEVA INSPECCIÓN
+                     ========================================= -->
+
+                <div class="fila-inspeccion">
+
+                    <!-- Campo para registrar la profundidad externa -->
+                    <div class="campo-profundidad">
+
+                        <label for="profundidad_externa">
+                            Surco externo:
+                        </label>
+
+                        <input
+                            type="number"
+                            id="profundidad_externa"
+                            name="profundidad_externa"
+                            step="0.1"
+                            min="0"
+                            max="99.9"
+                            required
+                        >
+
+                    </div>
+
+                    <!-- Campo para registrar la profundidad central -->
+                    <div class="campo-profundidad">
+
+                        <label for="profundidad_central">
+                            Surco central:
+                        </label>
+
+                        <input
+                            type="number"
+                            id="profundidad_central"
+                            name="profundidad_central"
+                            step="0.1"
+                            min="0"
+                            max="99.9"
+                            required
+                        >
+
+                    </div>
+
+                    <!-- Campo para registrar la profundidad interna -->
+                    <div class="campo-profundidad">
+
+                        <label for="profundidad_interna">
+                            Surco interno:
+                        </label>
+
+                        <input
+                            type="number"
+                            id="profundidad_interna"
+                            name="profundidad_interna"
+                            step="0.1"
+                            min="0"
+                            max="99.9"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                     UBICACIÓN DE DESTINO DE LA LLANTA
+                     ========================================= -->
+
+                <div class="campo-almacen">
+
+                    <label for="id_almacen">
+                        La llanta se deja en:
+                    </label>
+
+                    <select
+                        id="id_almacen"
+                        name="id_almacen"
+                        required
+                    >
+
+                        <!-- Opción inicial del menú -->
+                        <option value="">Seleccione</option>
+
+                        <!-- Mostrar los almacenes disponibles -->
+                        {% for almacen in almacenes_destino %}
+
+                            <option value="{{ almacen.id_almacen }}">
+                                {{ almacen.nombre_almacen }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- =========================================
+                     OBSERVACIONES DE LA INSPECCIÓN
+                     ========================================= -->
+
+                <div class="campo-general">
+
+                    <label for="observaciones">
+                        Observaciones:
+                    </label>
+
+                    <!-- Campo para escribir las observaciones del técnico -->
+                    <textarea
+                        id="observaciones"
+                        name="observaciones"
+                        rows="4"
+                    ></textarea>
+
+                </div>
+
+
+                <!-- =========================================
+                     FOTOGRAFÍAS COMO EVIDENCIA
+                     ========================================= -->
+
+                <div class="campo-general">
+
+                    <label for="fotografias">
+                        Fotografías de evidencia (máximo 5):
+                    </label>
+
+                    <!-- Permitir seleccionar varias fotografías -->
+                    <input
+                        type="file"
+                        id="fotografias"
+                        name="fotografias"
+                        accept=".jpg,.jpeg,.png"
+                        multiple
+                    >
+
+                    <!-- Recordatorio de las fotografías obligatorias para Desecho -->
+                    <p>
+                        Si el destino es Pila de Desecho, se deberán adjuntar
+                        entre 4 y 5 fotografías.
+                    </p>
+
+                </div>
+
+
+                <!-- =========================================
+                     BOTÓN PARA REGISTRAR LA INSPECCIÓN
+                     ========================================= -->
+
+                <div class="acciones">
+
+                    <button type="submit" class="boton-registrar">
+                        Registrar inspección
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+
+        <!-- =========================================
+             BOTÓN PARA REGRESAR AL INVENTARIO
+             ========================================= -->
+
+        <div class="navegacion">
+
+            <a href="{% url 'inicio' %}" class="boton-atras">
+                Atrás
+            </a>
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>

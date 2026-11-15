@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio de sesión - Gestión de Llantas</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #F4F7FB;
+            font-family: Arial, sans-serif;
+            color: #263238;
+        }
+
+        .encabezado {
+            background: #1F4E78;
+            color: #FFFFFF;
+            text-align: center;
+            padding: 25px 10px;
+        }
+
+        .encabezado h1 {
+            font-size: 20px;
+            margin: 0 0 5px;
+        }
+
+        .encabezado p {
+            font-size: 12px;
+            color: #DCEAF7;
+            margin: 0;
+        }
+
+        .marco-login {
+            background: #FFFFFF;
+            width: 410px;
+            max-width: calc(100% - 30px);
+            margin: 25px auto;
+            padding: 25px;
+        }
+
+        .marco-login h2 {
+            color: #1F4E78;
+            text-align: center;
+            font-size: 16px;
+            margin: 5px 0 25px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            font-size: 11px;
+            margin-bottom: 7px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            font-size: 14px;
+            border: 1px solid #B0BEC5;
+            margin-bottom: 20px;
+        }
+
+        button {
+            display: block;
+            margin: 5px auto;
+            padding: 12px 35px;
+            background: #2F75B5;
+            color: white;
+            border: none;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1F4E78;
+        }
+
+        .informacion {
+            text-align: center;
+            color: #607D8B;
+            font-size: 9px;
+            margin-top: 20px;
+        }
+
+        .error {
+            color: #B71C1C;
+            text-align: center;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="encabezado">
+        <h1>GESTIÓN Y CONTROL</h1>
+        <p>Inventario de Llantas</p>
+    </header>
+
+    <main class="marco-login">
+
+        <h2>Iniciar sesión</h2>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <label for="usuario">Usuario:</label>
+            <input
+                type="text"
+                id="usuario"
+                name="usuario"
+                required
+                autofocus
+            >
+
+            <label for="contrasena">Contraseña:</label>
+            <input
+                type="password"
+                id="contrasena"
+                name="contrasena"
+                required
+            >
+
+            <button type="submit">Ingresar</button>
+        </form>
+
+        <p class="informacion">
+            Ingrese sus credenciales para acceder al sistema.
+        </p>
+
+    </main>
+
+</body>
+</html>

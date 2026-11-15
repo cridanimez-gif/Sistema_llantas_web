@@ -1,0 +1,391 @@
+
+/* =========================================
+   CONFIGURACIÓN GENERAL
+   ========================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #F4F7FB;
+    color: #243247;
+}
+
+/* =========================================
+   ENCABEZADO PRINCIPAL
+   ========================================= */
+
+.encabezado {
+    background-color: #174A7E;
+    color: #FFFFFF;
+    padding: 25px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.encabezado h1 {
+    margin: 0;
+    font-size: 26px;
+}
+
+.encabezado p {
+    margin: 8px 0 0;
+    font-size: 15px;
+    color: #E2EAF3;
+}
+
+/* =========================================
+   INFORMACIÓN DEL USUARIO
+   ========================================= */
+
+.usuario-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+/* =========================================
+   CONTENEDOR PRINCIPAL
+   ========================================= */
+
+.contenedor {
+    max-width: 1200px;
+    margin: 30px 0;
+    padding: 0 25px;
+}
+
+/* =========================================
+   PANELES DE CONTENIDO
+   ========================================= */
+
+.panel {
+    background-color: #FFFFFF;
+    padding: 25px;
+    margin-bottom: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+}
+
+.panel h2 {
+    margin-top: 0;
+    color: #174A7E;
+    font-size: 21px;
+}
+
+.panel h3 {
+    color: #174A7E;
+}
+
+/* =========================================
+   FORMULARIOS Y CAMPOS
+   ========================================= */
+
+.formulario {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+label {
+    font-weight: bold;
+}
+
+input,
+select {
+    padding: 11px;
+    border: 1px solid #CBD5E1;
+    border-radius: 6px;
+    font-size: 14px;
+    min-width: 220px;
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: #2F75B5;
+    box-shadow: 0 0 0 2px rgba(47, 117, 181, 0.15);
+}
+
+/* =========================================
+   BOTONES
+   ========================================= */
+
+.btn {
+    display: inline-block;
+    padding: 11px 18px;
+    border: none;
+    border-radius: 6px;
+    color: #FFFFFF;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-azul {
+    background-color: #2F75B5;
+}
+
+.btn-azul:hover {
+    background-color: #174A7E;
+}
+
+.btn-rojo {
+    background-color: #C62828;
+}
+
+.btn-rojo:hover {
+    background-color: #A51F1F;
+}
+
+/* =========================================
+   RESULTADOS DE CONSULTA
+   ========================================= */
+
+.resultado {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #F4F7FB;
+    border-left: 4px solid #2F75B5;
+    border-radius: 6px;
+}
+
+.resultado p {
+    margin: 9px 0;
+}
+
+.mensaje-error {
+    color: #C62828;
+    font-weight: bold;
+}
+
+/* =========================================
+   TABLAS DE INFORMACIÓN
+   ========================================= */
+
+.tabla-contenedor {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th,
+td {
+    padding: 12px;
+    border-bottom: 1px solid #E2E8F0;
+    text-align: left;
+}
+
+th {
+    background-color: #174A7E;
+    color: #FFFFFF;
+}
+
+tr:hover {
+    background-color: #F1F5F9;
+}
+
+/* =========================================
+   ACCESO A LOS MÓDULOS
+   ========================================= */
+
+.modulos {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.modulo-enlace {
+    flex: 1;
+    min-width: 230px;
+    padding: 20px;
+    background-color: #F4F7FB;
+    border: 1px solid #DCE5EF;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #243247;
+    transition: 0.2s;
+}
+
+.modulo-enlace:hover {
+    border-color: #2F75B5;
+    transform: translateY(-3px);
+}
+
+.modulo-enlace h3 {
+    margin-top: 0;
+}
+
+/* =========================================
+   PIE DE PÁGINA
+   ========================================= */
+
+.pie {
+    padding: 20px;
+    text-align: center;
+    color: #607D8B;
+    font-size: 13px;
+}
+
+/* =========================================
+   ADAPTACIÓN A PANTALLAS PEQUEÑAS
+   ========================================= */
+
+@media (max-width: 700px) {
+    .encabezado {
+        padding: 22px;
+    }
+
+    .encabezado h1 {
+        font-size: 21px;
+    }
+
+    .contenedor {
+        padding: 0 15px;
+    }
+
+    .formulario {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    input,
+    select,
+    .btn {
+        width: 100%;
+    }
+}
+
+/* Alinear los campos de consulta */
+.formulario {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Dar el mismo ancho a las etiquetas */
+.formulario label {
+    width: 115px;
+    margin: 0;
+}
+
+/* Mantener iguales los campos */
+.formulario input,
+.formulario select {
+    width: 160px;
+    margin: 0;
+}
+
+/* Mantener iguales los botones */
+.formulario button {
+    width: 150px;
+    margin: 0;
+}
+
+/* Adaptar las consultas a pantallas pequeñas */
+@media (max-width: 600px) {
+    .formulario {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .formulario label,
+    .formulario input,
+    .formulario select,
+    .formulario button {
+        width: 100%;
+    }
+
+}
+/* Grupo compacto de mediciones iniciales */
+.grupo-mediciones {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.grupo-mediciones h2 {
+    margin: 0 0 15px;
+    text-align: left;
+}
+
+.mediciones {
+    display: flex;
+    align-items: flex-end;
+    gap: 18px;
+    margin-bottom: 20px;
+}
+
+.campo-medicion {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.campo-medicion label {
+    width: auto;
+    font-size: 14px;
+    margin: 0;
+}
+
+.campo-medicion input {
+    width: 55px;
+    min-width: 0;
+    padding: 7px 4px;
+    margin: 0;
+    text-align: center;
+    box-sizing: border-box;
+}
+/* Mensaje de registro exitoso */
+.mensaje-exito {
+    background-color: #E8F5E9;
+    color: #2E7D32;
+    border: 1px solid #A5D6A7;
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+}
+
+/* Mensaje de error en el formulario */
+.mensaje-error {
+    background-color: #FFEBEE;
+    color: #C62828;
+    border: 1px solid #EF9A9A;
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+}
+
+/* Título y fecha en una misma línea */
+.titulo-ultima-inspeccion {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 25px;
+    flex-wrap: nowrap;
+    margin-bottom: 18px;
+}
+
+/* Evita que el título o la fecha ocupen toda la línea */
+.titulo-ultima-inspeccion h2,
+.titulo-ultima-inspeccion p {
+    display: inline-block;
+    width: auto;
+    margin: 0;
+    white-space: nowrap;
+}
