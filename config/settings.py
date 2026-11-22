@@ -31,6 +31,10 @@ from urllib.parse import urlparse, parse_qsl, unquote
 # Directorio principal donde se encuentra el proyecto.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Carga las variables de conexión guardadas en el archivo .env.
+from dotenv import load_dotenv
+load_dotenv(BASE_DIR / ".env")
+
 
 # ==========================================================
 # SEGURIDAD Y MODO DE EJECUCIÓN
