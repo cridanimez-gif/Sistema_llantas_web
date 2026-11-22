@@ -40,6 +40,9 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copia todos los archivos y carpetas del proyecto Django hacia la carpeta /app del contenedor.
 COPY . /app/
 
+# Recopila los archivos CSS, JavaScript e imágenes para utilizarlos en producción.
+RUN python manage.py collectstatic --noinput
+
 # ==============================================
 # 6. PUERTO DE LA APLICACIÓN
 # ==============================================
