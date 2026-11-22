@@ -47,10 +47,15 @@ COPY . /app/
 # Indica el puerto que utilizará nuestra aplicación cuando se ejecute.
 EXPOSE 8000
 
+
 # ==============================================
 # 7. INICIO DE LA APLICACIÓN DJANGO
 # ==============================================
 
+# Ejecuta las migraciones de sesiones para crear las tablas necesarias en la base de datos.
+# El parámetro --noinput permite realizar el proceso sin solicitar confirmaciones.
+# Si las migraciones ya están aplicadas, Django no las ejecutará nuevamente.
+
 # Inicia Django mediante Gunicorn, un servidor de aplicaciones adecuado para producción.
 # Utiliza el puerto proporcionado por Render o el puerto 8000 si no existe esa variable.
-CMD ["sh", "-c", "gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000}"]
+CMD ["sh", "-c", "python manage.py migrate sessions --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000}"]
