@@ -28,13 +28,23 @@
             <p>{{ mensaje }}</p>
         </div>
 
-        <!-- Información del usuario y cierre de sesión -->
+
+        <!-- Información del usuario y opciones de navegación -->
         <div class="usuario-info">
-            <span>Usuario: {{ nombre_usuario }}</span>
-            <a href="{% url 'logout' %}" class="btn btn-rojo">
-                Cerrar sesión
-            </a>
-        </div>
+
+              <span>Usuario: {{ nombre_usuario }}</span>
+
+        <!-- Acceso al cambio de contraseña para todos los roles -->
+         <a href="{% url 'cambiar_contrasena' %}" class="btn btn-azul">
+        Cambiar contraseña
+      </a>
+
+    <!-- Cerrar sesión -->
+    <a href="{% url 'logout' %}" class="btn btn-rojo">
+        Cerrar sesión
+    </a>
+
+</div>
 
     </header>
 

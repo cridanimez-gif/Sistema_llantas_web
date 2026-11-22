@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.hashers import check_password
+from django.contrib.auth.hashers import check_password, make_password
 
 # Herramientas para manejar la fecha y hora de las inspecciones
 from django.utils import timezone
 
 # Importar los modelos necesarios para gestionar las llantas
-from .models import Llanta, Usuario, Almacen, Inspeccion, Evidencia
+from .models import Llanta, Usuario, Almacen, Inspeccion, Evidencia, Rol
 
 # Herramientas para validar y manejar valores decimales
 from decimal import Decimal, InvalidOperation
@@ -74,6 +74,189 @@ def logout(request):
 
     # Regresar a la página de inicio de sesión
     return redirect("login")
+
+
+# =====================================================
+# MÓDULO DE REGISTRO DE USUARIOS
+# =====================================================
+
+def registrar_usuario(request):
+
+    # Verificar que el usuario haya iniciado sesión
+    if "id_usuario" not in request.session:
+        return redirect("login")
+
+    # Permitir el acceso únicamente al Ingeniero
+    if request.session.get("id_rol") != 3:
+        return redirect("inicio")
+
+    # Inicializar los mensajes
+    mensaje_error = ""
+    mensaje_exito = ""
+
+    # Procesar el formulario cuando se envía
+    if request.method == "POST":
+
+        # Obtener los datos ingresados
+        nombre = request.POST.get("nombre", "").strip()
+        apellido = request.POST.get("apellido", "").strip()
+        nombre_usuario = request.POST.get("usuario", "").strip()
+        contrasena = request.POST.get("contrasena", "")
+        confirmar_contrasena = request.POST.get(
+            "confirmar_contrasena", ""
+        )
+        id_rol = request.POST.get("id_rol", "")
+
+        try:
+            # Verificar que todos los campos estén completos
+            if not all([
+                nombre, apellido, nombre_usuario,
+                contrasena, confirmar_contrasena, id_rol
+            ]):
+                raise ValueError("Completa todos los campos.")
+
+            # Validar la longitud de los datos
+            if len(nombre) > 50 or len(apellido) > 50:
+                raise ValueError("El nombre y apellido admiten máximo 50 caracteres.")
+
+            if len(nombre_usuario) > 50:
+                raise ValueError("El usuario admite máximo 50 caracteres.")
+
+            # Verificar que las contraseñas coincidan
+            if contrasena != confirmar_contrasena:
+                raise ValueError("Las contraseñas no coinciden.")
+
+            # Exigir una contraseña de al menos 8 caracteres
+            if len(contrasena) < 8:
+                raise ValueError("La contraseña debe tener al menos 8 caracteres.")
+
+            # Consultar el rol seleccionado
+            rol = Rol.objects.get(id_rol=id_rol)
+
+            # Verificar que el nombre de usuario no exista
+            if Usuario.objects.filter(usuario=nombre_usuario).exists():
+                raise ValueError("Ese nombre de usuario ya está registrado.")
+
+            # Guardar el nuevo usuario con contraseña protegida
+            Usuario.objects.create(
+                nombre=nombre,
+                apellido=apellido,
+                usuario=nombre_usuario,
+                contraseña=make_password(contrasena),
+                id_rol=rol,
+                activo=True
+            )
+
+            mensaje_exito = "El usuario fue registrado exitosamente."
+
+        except Rol.DoesNotExist:
+            mensaje_error = "El rol seleccionado no es válido."
+
+        except ValueError as error:
+            mensaje_error = str(error)
+
+        except IntegrityError:
+            mensaje_error = "No fue posible registrar el usuario. Verifica los datos."
+
+    # Consultar los roles disponibles
+    roles = Rol.objects.all().order_by("id_rol")
+
+    # Preparar la información para la página
+    contexto = {
+        "nombre_usuario": request.session.get("nombre_usuario"),
+        "roles": roles,
+        "mensaje_error": mensaje_error,
+        "mensaje_exito": mensaje_exito,
+    }
+
+    # Mostrar el formulario de registro de usuarios
+    return render(
+        request,
+        "llantas/registrar_usuario.html",
+        contexto
+    )
+
+
+# =====================================================
+# MÓDULO DE CAMBIO DE CONTRASEÑA
+# =====================================================
+
+def cambiar_contrasena(request):
+
+    # Verificar que el usuario haya iniciado sesión
+    if "id_usuario" not in request.session:
+        return redirect("login")
+
+    # Consultar los datos del usuario que inició sesión
+    try:
+        usuario = Usuario.objects.get(
+            id_usuario=request.session["id_usuario"],
+            activo=True
+        )
+    except Usuario.DoesNotExist:
+        request.session.flush()
+        return redirect("login")
+
+    # Inicializar los mensajes
+    mensaje_error = ""
+    mensaje_exito = ""
+
+    # Procesar el formulario cuando se envía
+    if request.method == "POST":
+
+        # Obtener las contraseñas ingresadas
+        contrasena_actual = request.POST.get("contrasena_actual", "")
+        nueva_contrasena = request.POST.get("nueva_contrasena", "")
+        confirmar_contrasena = request.POST.get(
+            "confirmar_contrasena", ""
+        )
+
+        # Verificar que todos los campos estén completos
+        if not all([
+            contrasena_actual,
+            nueva_contrasena,
+            confirmar_contrasena
+        ]):
+            mensaje_error = "Completa todos los campos."
+
+        # Comprobar la contraseña actual
+        elif not check_password(contrasena_actual, usuario.contraseña):
+            mensaje_error = "La contraseña actual es incorrecta."
+
+        # Verificar la longitud de la nueva contraseña
+        elif len(nueva_contrasena) < 8:
+            mensaje_error = "La nueva contraseña debe tener al menos 8 caracteres."
+
+        # Verificar que la nueva contraseña y su confirmación coincidan
+        elif nueva_contrasena != confirmar_contrasena:
+            mensaje_error = "Las nuevas contraseñas no coinciden."
+
+        # Evitar que se vuelva a utilizar la misma contraseña
+        elif check_password(nueva_contrasena, usuario.contraseña):
+            mensaje_error = "La nueva contraseña debe ser diferente a la actual."
+
+        else:
+            # Proteger y guardar la nueva contraseña
+            usuario.contraseña = make_password(nueva_contrasena)
+            usuario.save(update_fields=["contraseña"])
+
+            mensaje_exito = "Tu contraseña fue actualizada correctamente."
+
+    # Preparar la información para mostrar la página
+    contexto = {
+        "nombre_usuario": usuario.nombre,
+        "mensaje_error": mensaje_error,
+        "mensaje_exito": mensaje_exito,
+    }
+
+    # Mostrar el formulario de cambio de contraseña
+    return render(
+        request,
+        "llantas/cambiar_contrasena.html",
+        contexto
+    )
+
+
 
 
 # =====================================================

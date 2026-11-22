@@ -62,6 +62,13 @@
                     <h3>Consultar historial</h3>
                     <p>Consultar inspecciones y antecedentes de una llanta.</p>
                 </a>
+                    <!-- Mostrar el registro de usuarios únicamente al Ingeniero -->
+    {% if id_rol == 3 %}
+        <a href="{% url 'registrar_usuario' %}" class="modulo-enlace">
+            <h3>Registrar nuevo usuario</h3>
+            <p>Crear usuarios y asignarles un rol dentro del sistema.</p>
+        </a>
+    {% endif %}
 
             </div>
 

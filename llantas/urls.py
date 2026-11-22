@@ -39,6 +39,12 @@ urlpatterns = [
     # Dirección para registrar una llanta nueva
     path("administracion/registrar/", views.registrar_llanta, name="registrar_llanta"),
 
+    # Dirección para registrar nuevos usuarios (solo Ingeniero)
+    path("administracion/registrar-usuario/",views.registrar_usuario,name="registrar_usuario"),
+
+    # Dirección para cambiar la contraseña del usuario autenticado
+    path("cambiar-contrasena/",views.cambiar_contrasena,name="cambiar_contrasena"),
+
     # Abrir el formulario para realizar una inspección
     path("inspecciones/<str:numero_llanta>/",views.nueva_inspeccion,name="nueva_inspeccion"),
 

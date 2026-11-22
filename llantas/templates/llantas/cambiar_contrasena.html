@@ -1,0 +1,116 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cambiar contraseña</title>
+
+    <!-- Hoja de estilos general del sistema -->
+    <link rel="stylesheet" href="{% static 'llantas/estilos.css' %}">
+</head>
+
+<body>
+
+    <!-- Encabezado del módulo -->
+    <header class="encabezado">
+        <div>
+            <h1>Cambiar contraseña</h1>
+        </div>
+
+        <!-- Información del usuario y opciones de navegación -->
+        <div class="usuario-info">
+            <span>Usuario: {{ nombre_usuario }}</span>
+
+            <a href="{% url 'inicio' %}" class="btn btn-azul">
+                Regresar
+            </a>
+
+            <a href="{% url 'logout' %}" class="btn btn-rojo">
+                Cerrar sesión
+            </a>
+        </div>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="contenedor">
+
+        <section class="panel">
+
+            <h2>Actualizar mi contraseña</h2>
+
+            <p>
+                Ingresa tu contraseña actual y establece una nueva
+                contraseña personal para tu cuenta.
+            </p>
+
+            <!-- Mostrar mensaje de éxito -->
+            {% if mensaje_exito %}
+                <p class="mensaje-exito">
+                    {{ mensaje_exito }}
+                </p>
+            {% endif %}
+
+            <!-- Mostrar mensaje de error -->
+            {% if mensaje_error %}
+                <p class="mensaje-error">
+                    {{ mensaje_error }}
+                </p>
+            {% endif %}
+
+            <!-- Formulario de cambio de contraseña -->
+            <form method="POST" class="formulario">
+
+                {% csrf_token %}
+
+                <label for="contrasena_actual">
+                    Contraseña actual:
+                </label>
+
+                <input
+                    type="password"
+                    id="contrasena_actual"
+                    name="contrasena_actual"
+                    required
+                >
+
+                <label for="nueva_contrasena">
+                    Nueva contraseña:
+                </label>
+
+                <input
+                    type="password"
+                    id="nueva_contrasena"
+                    name="nueva_contrasena"
+                    minlength="8"
+                    required
+                >
+
+                <label for="confirmar_contrasena">
+                    Confirmar nueva contraseña:
+                </label>
+
+                <input
+                    type="password"
+                    id="confirmar_contrasena"
+                    name="confirmar_contrasena"
+                    minlength="8"
+                    required
+                >
+
+                <!-- Botón para guardar la nueva contraseña -->
+                <button type="submit" class="btn btn-azul">
+                    Actualizar contraseña
+                </button>
+
+            </form>
+
+        </section>
+
+    </main>
+
+</body>
+</html>

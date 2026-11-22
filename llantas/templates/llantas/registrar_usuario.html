@@ -1,0 +1,140 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Registro de Usuarios</title>
+
+    <!-- Hoja de estilos general del sistema -->
+    <link rel="stylesheet" href="{% static 'llantas/estilos.css' %}">
+</head>
+
+<body>
+
+    <!-- Encabezado del módulo -->
+    <header class="encabezado">
+        <div>
+            <h1>Registro de Usuarios</h1>
+        </div>
+
+        <!-- Información del usuario y opciones de navegación -->
+        <div class="usuario-info">
+            <span>Ingeniero: {{ nombre_usuario }}</span>
+
+            <a href="{% url 'administracion' %}" class="btn btn-azul">
+                Regresar
+            </a>
+
+            <a href="{% url 'logout' %}" class="btn btn-rojo">
+                Cerrar sesión
+            </a>
+        </div>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="contenedor">
+
+        <section class="panel">
+
+            <h2>Registrar nuevo usuario</h2>
+
+            <p>
+                Ingresa la información del usuario y selecciona
+                el rol que tendrá dentro del sistema.
+            </p>
+
+            <!-- Mostrar mensaje de registro exitoso -->
+            {% if mensaje_exito %}
+                <p class="mensaje-exito">
+                    {{ mensaje_exito }}
+                </p>
+            {% endif %}
+
+            <!-- Mostrar mensaje de error -->
+            {% if mensaje_error %}
+                <p class="mensaje-error">
+                    {{ mensaje_error }}
+                </p>
+            {% endif %}
+
+            <!-- Formulario de registro -->
+            <form method="POST" class="formulario">
+
+                {% csrf_token %}
+
+                <label for="nombre">Nombre:</label>
+                <input
+                    type="text"
+                    id="nombre"
+                    name="nombre"
+                    maxlength="50"
+                    required
+                >
+
+                <label for="apellido">Apellido:</label>
+                <input
+                    type="text"
+                    id="apellido"
+                    name="apellido"
+                    maxlength="50"
+                    required
+                >
+
+                <label for="usuario">Nombre de usuario:</label>
+                <input
+                    type="text"
+                    id="usuario"
+                    name="usuario"
+                    maxlength="50"
+                    required
+                >
+
+                <label for="contrasena">Contraseña:</label>
+                <input
+                    type="password"
+                    id="contrasena"
+                    name="contrasena"
+                    minlength="8"
+                    required
+                >
+
+                <label for="confirmar_contrasena">
+                    Confirmar contraseña:
+                </label>
+                <input
+                    type="password"
+                    id="confirmar_contrasena"
+                    name="confirmar_contrasena"
+                    minlength="8"
+                    required
+                >
+
+                <label for="id_rol">Rol del usuario:</label>
+                <select id="id_rol" name="id_rol" required>
+                    <option value="">Selecciona un rol</option>
+
+                    {% for rol in roles %}
+                        <option value="{{ rol.id_rol }}">
+                            {{ rol.nombre_rol }}
+                        </option>
+                    {% endfor %}
+
+                </select>
+
+                <!-- Botón para guardar el nuevo usuario -->
+                <button type="submit" class="btn btn-azul">
+                    Registrar usuario
+                </button>
+
+            </form>
+
+        </section>
+
+    </main>
+
+</body>
+</html>
