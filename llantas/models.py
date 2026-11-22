@@ -74,7 +74,7 @@ class Usuario(models.Model):
 
     def __str__(self):
         return self.usuario
-    
+
     # Modelo que representa la tabla de inspecciones de MySQL
 class Inspeccion(models.Model):
 
@@ -126,8 +126,9 @@ class Inspeccion(models.Model):
     # Representación de la inspección cuando se consulta como objeto
     def __str__(self):
         return f"Inspección {self.id_inspeccion} - {self.numero_llanta_id}"
-    
+
     # Modelo que representa la tabla de evidencias de MySQL
+
 class Evidencia(models.Model):
 
     # Identificador único de cada evidencia

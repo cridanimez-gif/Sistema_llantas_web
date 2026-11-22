@@ -17,6 +17,7 @@
 </head>
 
 <body>
+    {% get_media_prefix as MEDIA_URL %}
 
     <!-- Encabezado del módulo -->
     <header class="encabezado">
@@ -126,6 +127,27 @@
                     <p><strong>Profundidad interna:</strong> {{ inspeccion.profundidad_interna }} mm</p>
                     <p><strong>Observaciones:</strong> {{ inspeccion.observaciones|default:"Sin observaciones" }}</p>
                     <p><strong>Almacén de destino:</strong> {{ inspeccion.id_almacen_destino.nombre_almacen }}</p>
+
+            <!-- Mostrar las fotografías de evidencia de esta inspección -->
+<h4>Fotografías de evidencia</h4>
+
+{% for evidencia in inspeccion.evidencia_set.all %}
+
+    <div>
+        <a href="{{ MEDIA_URL }}{{ evidencia.ruta_archivo }}" target="_blank">
+            <img
+                src="{{ MEDIA_URL }}{{ evidencia.ruta_archivo }}"
+                alt="Fotografía de evidencia"
+                style="width: 180px; height: auto; margin: 8px; border-radius: 6px;"
+            >
+        </a>
+    </div>
+
+{% empty %}
+
+    <p>Esta inspección no tiene fotografías adjuntas.</p>
+
+{% endfor %}
 
                 </div>
 

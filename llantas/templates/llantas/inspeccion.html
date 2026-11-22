@@ -396,7 +396,18 @@
                 gap: 15px;
             }
         }
-
+            /* Estilo para los mensajes de confirmación */
+.mensaje-confirmacion {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    padding: 14px;
+    margin: 15px 0;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 16px;
+}
     </style>
 
 </head>
@@ -431,7 +442,14 @@
          ========================================= -->
 
     <main class="contenedor">
-
+         <!-- Mostrar mensajes de confirmación o error -->
+{% if messages %}
+    {% for message in messages %}
+        <div class="mensaje-confirmacion">
+            {{ message }}
+            </div>
+            {% endfor %}
+{% endif %}
         <!-- Título de la página de inspecciones -->
         <h1 class="titulo-pagina">NUEVA INSPECCIÓN</h1>
 

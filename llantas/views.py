@@ -19,6 +19,8 @@ from django.contrib import messages
 # Herramienta para guardar las fotografías de las inspecciones
 from django.core.files.storage import default_storage
 
+from django.shortcuts import render, redirect, get_object_or_404
+
 
 # =====================================================
 # INICIO DE SESIÓN
@@ -701,8 +703,6 @@ def registrar_llanta(request):
 # ============================================================
 # PREPARAR UNA NUEVA INSPECCIÓN
 # ============================================================
-
-
 # Registrar una nueva inspección realizada por el técnico
 def nueva_inspeccion(request, numero_llanta):
 
@@ -916,15 +916,14 @@ def nueva_inspeccion(request, numero_llanta):
                         # Informar que la inspección fue registrada
                         messages.success(
                             request,
-                            "La inspección de la llanta fue registrada "
-                            "correctamente."
+                            "inspección registrada exitosamente."
                         )
 
-                        # Volver a la pantalla principal
-                        return redirect("inicio")
+                        # Regresar al formulario de la misma llanta
+                        return redirect("nueva_inspeccion", numero_llanta=numero_llanta)
 
                     except (Usuario.DoesNotExist, IntegrityError, OSError):
-                        
+
                         # Eliminar las fotografías guardadas si ocurre un error
                         for ruta in rutas_guardadas:
                             if default_storage.exists(ruta):
@@ -949,5 +948,34 @@ def nueva_inspeccion(request, numero_llanta):
         request,
         "llantas/inspeccion.html",
         contexto
+    )
+
+    # ============================================================
+# VISTA PARA MOSTRAR EL FORMULARIO DE PRUEBA DE LA API
+# ============================================================
+
+def formulario_api_inspeccion(request, numero_llanta):
+
+    # Verificar que el usuario haya iniciado sesión
+    if not request.session.get("id_usuario"):
+        return redirect("login")
+
+    # Buscar la llanta que se va a inspeccionar
+    llanta = get_object_or_404(
+        Llanta,
+        numero_llanta=numero_llanta
+    )
+
+    # Consultar los almacenes disponibles
+    almacenes = Almacen.objects.all().order_by("id_almacen")
+
+    # Mostrar el formulario y enviarle los datos necesarios
+    return render(
+        request,
+        "llantas/formulario_api_inspeccion.html",
+        {
+            "numero_llanta": llanta.numero_llanta,
+            "almacenes": almacenes
+        }
     )
 

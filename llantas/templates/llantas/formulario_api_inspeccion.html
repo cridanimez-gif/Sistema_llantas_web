@@ -1,0 +1,118 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Prueba de registro de inspección</title>
+
+    <style>
+        /* Diseño general de la página */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f4f7;
+            margin: 0;
+            padding: 30px;
+        }
+
+        /* Cuadro principal del formulario */
+        .contenedor {
+            max-width: 650px;
+            margin: auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+        }
+
+        h2 {
+            color: #174a7e;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            box-sizing: border-box;
+        }
+
+        button {
+            margin-top: 22px;
+            padding: 12px 20px;
+            background-color: #174a7e;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #10365c;
+        }
+
+        .nota {
+            color: #555;
+            font-size: 13px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="contenedor">
+
+        <h2>Registro de inspección</h2>
+
+        <!-- Formulario para enviar los datos a la API -->
+        <form method="POST"
+              action="{% url 'api_registrar_inspeccion' numero_llanta=numero_llanta %}"
+              enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+            <label>Profundidad externa</label>
+            <input type="number" name="profundidad_externa"
+                   step="0.1" required>
+
+            <label>Profundidad central</label>
+            <input type="number" name="profundidad_central"
+                   step="0.1" required>
+
+            <label>Profundidad interna</label>
+            <input type="number" name="profundidad_interna"
+                   step="0.1" required>
+
+            <label>Almacén de destino</label>
+            <select name="id_almacen" required>
+                {% for almacen in almacenes %}
+                    <option value="{{ almacen.id_almacen }}">
+                        {{ almacen.nombre_almacen }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <label>Observaciones</label>
+            <textarea name="observaciones" rows="4"></textarea>
+
+            <label>Fotografías de evidencia</label>
+            <input type="file" name="fotografias"
+                   accept=".jpg,.jpeg,.png"
+                   multiple>
+
+            <p class="nota">
+                Puedes seleccionar varias fotografías.
+                Formatos permitidos: JPG, JPEG y PNG.
+            </p>
+
+            <button type="submit">Registrar inspección</button>
+
+        </form>
+    </div>
+</body>
+</html>

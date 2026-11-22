@@ -1,0 +1,9 @@
+REPOSITORIO GITHUB
+
+Proyecto: Sistema de Gestión y Control de Inventario de Llantas del Taller
+
+Evidencia: GA7-220501096-AA2-EV02
+
+Enlace del repositorio:
+
+https://github.com/cridanimez-gif/Sistema_llantas_web
