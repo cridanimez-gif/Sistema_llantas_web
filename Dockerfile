@@ -40,8 +40,6 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copia todos los archivos y carpetas del proyecto Django hacia la carpeta /app del contenedor.
 COPY . /app/
 
-# Recopila los archivos CSS, JavaScript e imágenes para utilizarlos en producción.
-RUN python manage.py collectstatic --noinput
 
 # ==============================================
 # 6. PUERTO DE LA APLICACIÓN
@@ -50,15 +48,16 @@ RUN python manage.py collectstatic --noinput
 # Indica el puerto que utilizará nuestra aplicación cuando se ejecute.
 EXPOSE 8000
 
-
 # ==============================================
 # 7. INICIO DE LA APLICACIÓN DJANGO
 # ==============================================
 
-# Ejecuta las migraciones de sesiones para crear las tablas necesarias en la base de datos.
-# El parámetro --noinput permite realizar el proceso sin solicitar confirmaciones.
-# Si las migraciones ya están aplicadas, Django no las ejecutará nuevamente.
+# Ejecuta las migraciones de sesiones antes de iniciar la aplicación.
+# Permite crear las tablas necesarias para administrar las sesiones.
+
+# Recopila los archivos CSS, JavaScript e imágenes para utilizarlos en producción.
+# Se ejecuta al iniciar el servicio, cuando Render ya proporciona las variables de entorno.
 
 # Inicia Django mediante Gunicorn, un servidor de aplicaciones adecuado para producción.
 # Utiliza el puerto proporcionado por Render o el puerto 8000 si no existe esa variable.
-CMD ["sh", "-c", "python manage.py migrate sessions --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000}"]
+CMD ["sh", "-c", "python manage.py migrate sessions --noinput && python manage.py collectstatic --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000}"]
