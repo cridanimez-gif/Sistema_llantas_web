@@ -6,6 +6,21 @@ Configuración principal del proyecto Sistema de Gestión de Llantas.
 from pathlib import Path
 
 
+
+# ==========================================================
+# IMPORTACIÓN DE HERRAMIENTAS
+# ==========================================================
+
+# Permite trabajar con las rutas y variables de entorno del sistema.
+import os
+
+# Permite informar errores cuando falta una configuración obligatoria.
+from django.core.exceptions import ImproperlyConfigured
+
+# Permite identificar la carpeta principal del proyecto.
+from pathlib import Path
+
+
 # ==========================================================
 # RUTAS PRINCIPALES DEL PROYECTO
 # ==========================================================
@@ -15,18 +30,33 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # ==========================================================
-# SEGURIDAD Y MODO DE DESARROLLO
+# SEGURIDAD Y MODO DE EJECUCIÓN
 # ==========================================================
 
-# Clave secreta utilizada internamente por Django.
-# Importar las claves privadas del proyecto
-from .secretos import SECRET_KEY, MYSQL_PASSWORD
+# Carga las claves privadas cuando el proyecto se ejecuta localmente.
+try:
+    from .secretos import SECRET_KEY as CLAVE_LOCAL
+    from .secretos import MYSQL_PASSWORD as CONTRASENA_LOCAL
+except ImportError:
+    CLAVE_LOCAL = ''
+    CONTRASENA_LOCAL = ''
 
-# Activar el modo de desarrollo.
-DEBUG = True
+# Obtiene la clave secreta desde el entorno o utiliza la configuración local.
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', CLAVE_LOCAL)
 
-# Direcciones autorizadas para acceder al proyecto.
-ALLOWED_HOSTS = []
+# Impide iniciar Django si no se ha configurado una clave secreta.
+if not SECRET_KEY:
+    raise ImproperlyConfigured('No se ha configurado DJANGO_SECRET_KEY.')
+
+# Activa el modo de desarrollo únicamente cuando la variable lo indica.
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() == 'true'
+
+# Define los servidores autorizados para acceder a la aplicación.
+ALLOWED_HOSTS = os.environ.get(
+    'DJANGO_ALLOWED_HOSTS',
+    '127.0.0.1,localhost'
+).split(',')
+
 
 
 # ==========================================================
@@ -51,6 +81,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -84,20 +115,40 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
+
 # ==========================================================
-# CONEXIÓN A LA BASE DE DATOS MYSQL
+# 5. CONEXIÓN A LA BASE DE DATOS MYSQL
 # ==========================================================
 
+# Obtiene la contraseña de MySQL desde el entorno o utiliza la local.
+CONTRASENA_MYSQL = os.environ.get(
+    'MYSQL_PASSWORD',
+    CONTRASENA_LOCAL
+)
+
+# Configura la conexión de Django con la base de datos MySQL.
 DATABASES = {
     'default': {
+        # Indica que utilizaremos MySQL como motor de base de datos.
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'gestion_llantas',
-        'USER': 'root',
-        'PASSWORD': MYSQL_PASSWORD,
-        'HOST': 'localhost',
-        'PORT': '3307',
+
+        # Obtiene el nombre de la base de datos desde el entorno.
+        'NAME': os.environ.get('MYSQL_DATABASE', 'gestion_llantas'),
+
+        # Obtiene el usuario de MySQL desde el entorno.
+        'USER': os.environ.get('MYSQL_USER', 'root'),
+
+        # Utiliza la contraseña configurada para el entorno correspondiente.
+        'PASSWORD': CONTRASENA_MYSQL,
+
+        # Obtiene el servidor MySQL desde el entorno.
+        'HOST': os.environ.get('MYSQL_HOST', 'localhost'),
+
+        # Obtiene el puerto de MySQL desde el entorno.
+        'PORT': os.environ.get('MYSQL_PORT', '3307'),
     }
 }
+
 
 
 # ==========================================================
@@ -141,8 +192,11 @@ USE_TZ = True
 # ARCHIVOS ESTÁTICOS
 # ==========================================================
 
-# Dirección para cargar CSS, JavaScript e imágenes estáticas.
-STATIC_URL = 'static/'
+# Dirección utilizada para acceder a los archivos estáticos.
+STATIC_URL = '/static/'
+
+# Carpeta donde Django reunirá los archivos estáticos para producción.
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
 # ==========================================================

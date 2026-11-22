@@ -1,0 +1,52 @@
+
+# ==============================================
+# 1. ENTORNO VIRTUAL DE PYTHON
+# ==============================================
+
+# Excluye el entorno virtual local.
+.venv/
+venv/
+
+# ==============================================
+# 2. ARCHIVOS TEMPORALES
+# ==============================================
+
+# Excluye archivos temporales de Python.
+__pycache__/
+*.py[cod]
+
+# ==============================================
+# 3. ARCHIVOS PRIVADOS Y VARIABLES LOCALES
+# ==============================================
+
+# Excluye las credenciales y configuraciones privadas.
+.env
+.env.*
+config/secretos.py
+
+# ==============================================
+# 4. ARCHIVOS MULTIMEDIA
+# ==============================================
+
+# Evita copiar las fotografías y archivos cargados localmente.
+media/
+
+# ==============================================
+# 5. CONTROL DE VERSIONES Y EDITOR
+# ==============================================
+
+# Excluye los archivos de Git.
+.git/
+
+# Excluye la configuración local de VS Code.
+.vscode/
+
+# ==============================================
+# 6. ARCHIVOS DE DESARROLLO
+# ==============================================
+
+# Excluye la base de datos SQLite local.
+db.sqlite3
+
+# Excluye archivos temporales de Code Runner.
+config/tempCodeRunnerFile.py

@@ -1,16 +1,17 @@
-"""
-WSGI config for config project.
+# ==============================================
+# CONFIGURACIÓN WSGI DEL PROYECTO
+# ==============================================
 
-It exposes the WSGI callable as a module-level variable named ``application``.
+# WSGI permite la comunicación entre el servidor de aplicaciones (Gunicorn) y nuestro proyecto desarrollado con Django.
 
-For more information on this file, see
-https://docs.djangoproject.com/en/6.1/howto/deployment/wsgi/
-"""
-
+# Importa el módulo os para gestionar variables de entorno del sistema.
 import os
 
+# Importa la función que crea la aplicación WSGI de Django.
 from django.core.wsgi import get_wsgi_application
 
+# Indica cuál es el archivo de configuración principal de nuestro proyecto Django.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 
+# Crea la aplicación WSGI que utilizará Gunicorn para comunicarse con Django.
 application = get_wsgi_application()

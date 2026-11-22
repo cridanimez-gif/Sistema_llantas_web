@@ -23,3 +23,5 @@ media/
 config/secretos.py
 # Archivos temporales de Code Runner
 config/tempCodeRunnerFile.py
+# Archivos estáticos recopilados automáticamente para producción
+staticfiles/
