@@ -20,6 +20,9 @@ from django.core.exceptions import ImproperlyConfigured
 # Permite identificar la carpeta principal del proyecto.
 from pathlib import Path
 
+# Permite interpretar la dirección de conexión y obtener los parámetros de PostgreSQL.
+from urllib.parse import urlparse, parse_qsl, unquote
+
 
 # ==========================================================
 # RUTAS PRINCIPALES DEL PROYECTO
@@ -126,28 +129,65 @@ CONTRASENA_MYSQL = os.environ.get(
     CONTRASENA_LOCAL
 )
 
-# Configura la conexión de Django con la base de datos MySQL.
-DATABASES = {
-    'default': {
-        # Indica que utilizaremos MySQL como motor de base de datos.
-        'ENGINE': 'django.db.backends.mysql',
 
-        # Obtiene el nombre de la base de datos desde el entorno.
-        'NAME': os.environ.get('MYSQL_DATABASE', 'gestion_llantas'),
+# Obtiene la dirección de conexión de PostgreSQL desde las variables del entorno.
+DATABASE_URL = os.environ.get('DATABASE_URL')
 
-        # Obtiene el usuario de MySQL desde el entorno.
-        'USER': os.environ.get('MYSQL_USER', 'root'),
+# Si existe DATABASE_URL, Django utilizará PostgreSQL de Neon.
+if DATABASE_URL:
 
-        # Utiliza la contraseña configurada para el entorno correspondiente.
-        'PASSWORD': CONTRASENA_MYSQL,
+    # Analiza los datos de conexión recibidos desde Neon.
+    datos_postgres = urlparse(DATABASE_URL)
 
-        # Obtiene el servidor MySQL desde el entorno.
-        'HOST': os.environ.get('MYSQL_HOST', 'localhost'),
+    DATABASES = {
+        'default': {
+            # Utiliza PostgreSQL como motor de base de datos.
+            'ENGINE': 'django.db.backends.postgresql',
 
-        # Obtiene el puerto de MySQL desde el entorno.
-        'PORT': os.environ.get('MYSQL_PORT', '3307'),
+            # Nombre de la base de datos.
+            'NAME': unquote(datos_postgres.path.lstrip('/')),
+
+            # Usuario de PostgreSQL.
+            'USER': unquote(datos_postgres.username or ''),
+
+            # Contraseña obtenida de la variable de entorno.
+            'PASSWORD': unquote(datos_postgres.password or ''),
+
+            # Servidor de PostgreSQL.
+            'HOST': datos_postgres.hostname,
+
+            # Puerto de PostgreSQL.
+            'PORT': datos_postgres.port or 5432,
+
+            # Opciones de conexión, incluido el requisito SSL de Neon.
+            'OPTIONS': dict(parse_qsl(datos_postgres.query)),
+        }
     }
-}
+
+# Si no existe DATABASE_URL, Django seguirá utilizando MySQL local.
+else:
+
+    DATABASES = {
+        'default': {
+            # Motor de base de datos MySQL.
+            'ENGINE': 'django.db.backends.mysql',
+
+            # Nombre de la base de datos local.
+            'NAME': os.environ.get('MYSQL_DATABASE', 'gestion_llantas'),
+
+            # Usuario de MySQL.
+            'USER': os.environ.get('MYSQL_USER', 'root'),
+
+            # Contraseña de MySQL.
+            'PASSWORD': CONTRASENA_MYSQL,
+
+            # Servidor MySQL local.
+            'HOST': os.environ.get('MYSQL_HOST', 'localhost'),
+
+            # Puerto de MySQL.
+            'PORT': os.environ.get('MYSQL_PORT', '3307'),
+        }
+    }
 
 
 
